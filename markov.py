@@ -1,20 +1,9 @@
 import random
 import copy
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument("input", help="Input file to get data from", type=str)
-parser.add_argument("paragraphs", help="Number of paragraphs to generate", type=int)
-parser.add_argument("--size", help="Size of the paragraphs", type=int)
-
-args = parser.parse_args()
-
-final_sentence = ""
-input = open(args.input, "r")
 
 
 def fix_up_input(input):
-	words = input.read().strip().replace('\n', ' ').replace('.','').replace('"','').lower().split(' ')
+	words = input.strip().replace('\n', ' ').replace('.','').replace('"','').lower().split(' ')
 
 	list_of_words = []
 
@@ -22,8 +11,6 @@ def fix_up_input(input):
 		if word == '' or word == '\n':
 			continue
 		list_of_words.append(word.strip())
-	
-	input.seek(0)
 	
 	return list_of_words
 
@@ -99,43 +86,3 @@ def get_random_phrase(input):
 				second_word = phrases_list[word]
 	
 	return(first_word)
-
-size = args.size
-
-# if size wasn't specified
-if(size == None):
-	# specify a size
-	size = 20
-else:
-	# keep the current size
-	size = args.size
-	
-final_string = ""
-
-for paragraph in range(0, args.paragraphs):
-	para = ""
-	# for each index in a random number between 10 and size
-	for a in range(random.randint(10, size)):
-		# if index is 0
-		if(a == 0):
-			# make first sentence have upper case letter
-			para += get_random_phrase(input)
-			para = para[0].upper() + para[1:]
-			para += " "
-		else:
-			# do it normally
-			para += get_random_phrase(input)
-			para += " "
-	# replace whitespace with period
-	para = para[:len(para)-1] + "."
-	# spacing in between
-	para += "\n\n"
-	
-	# add it to the final product
-	final_string += para
-
-
-	
-print(final_string)
-
-input.close()
