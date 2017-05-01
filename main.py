@@ -1,6 +1,7 @@
 import discord
 import markov
 import random
+import requests
 
 bot = discord.Client()
 
@@ -60,7 +61,34 @@ async def on_message(message):
 			final_sentence = final_sentence[:len(final_sentence)-1] + "."
 			
 			# send the message
-			await bot.send_message(message.channel, "```{0}```".format(final_sentence))
+			await bot.send_message(message.channel, "```From: {0}\n\nTo: {1}\n\n\n{2}```".format(bot.user.name, user, final_sentence))
+		
+		if message.content.startswith("./attachmarkov"):
+			print(message.attachments)
+			if len(message.attachments) != 1:
+				await bot.send_message(message.channel, "```ERROR:\n\nYou need one attachment```")
+			else:
+				final_sentence = ""
+				attachment = message.attachments[0]
+				input = requests.get(attachment["url"]).text
+				
+				for a in range(random.randint(10, 20)):
+					# if index is 0
+					if(a == 0):
+						# make first sentence have upper case letter
+						final_sentence += markov.get_random_phrase(input)
+						final_sentence = final_sentence[0].upper() + final_sentence[1:]
+						final_sentence += " "
+					else:
+						# do it normally
+						final_sentence += markov.get_random_phrase(input)
+						final_sentence += " "
+				# replace whitespace with period
+				final_sentence = final_sentence[:len(final_sentence)-1] + "."
+				
+				await bot.send_message(message.channel, "```{0}```".format(final_sentence))
+				
+				
 							
 	else:
 		return
